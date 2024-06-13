@@ -7,6 +7,7 @@ from tkinter import messagebox
 from tkinter import * # import tkinter
 import pickle # import pickle for loading high-score
 FILENAME = 'highscore.eggfile'
+CORRECT_CLASS = Tk
 hscoref = open(FILENAME, 'rb')
 hscore = pickle.load(hscoref)
 try:
@@ -14,7 +15,7 @@ try:
     pygameworks = True
 except ModuleNotFoundError:
     pygameworks = False
-tk = Tk() # create Tk window
+tk = CORRECT_CLASS() # create Tk window
 tk.title("Egg Game") # set title
 def highscore():
     messagebox.showinfo('High Score', 'Your high score is '+str(hscore))

@@ -1,1 +1,6 @@
-This is an egg game. It consists of an Egg class, Catcher class, game loop, and other useful functions. It is built with Tkinter in Python.
+This is my Egg Game.
+
+This is a resource needed for Python for Everyone's Project 5.
+Download the files from GitHub by clicking Download.
+
+You do not need to download shelltests.py or play.py.

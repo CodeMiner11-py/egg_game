@@ -7,19 +7,24 @@ from tkinter import messagebox
 from tkinter import * # import tkinter
 import pickle # import pickle for loading high-score
 FILENAME = 'highscore.eggfile'
+CORRECT_CLASS = Tk
 hscoref = open(FILENAME, 'rb')
 hscore = pickle.load(hscoref)
+score = 0
+import random, time
+
 try:
-    import random, time, pygame # import random module for egg spawning, time for waiting between spawns, pygame for music
+    import pygame # import random module for egg spawning, time for waiting between spawns, pygame for music
     pygameworks = True
 except ModuleNotFoundError:
     pygameworks = False
-tk = Tk() # create Tk window
+
+tk = CORRECT_CLASS() # create Tk window
 tk.title("Egg Game") # set title
 def highscore():
     messagebox.showinfo('High Score', 'Your high score is '+str(hscore))
 def tkinfo():
-    messagebox.showinfo('Egg Info', 'Copyright © 2024 by Eshaan Buddhisagar, Crea\
+    messagebox.showinfo('Egg Info', 'Created by Eshaan Buddhisagar, Crea\
 ted in 2024 using Python. Drawings except for egg were created with Procreate. \
 Code by Eshaan Buddhisagar.')
 newscore = None
@@ -35,7 +40,7 @@ eggfile = PhotoImage(file="egg.png") # import egg image
 catchfile = PhotoImage(file="catcher.png") # import catcher image
 bgfile = PhotoImage(file="bg.png") # import background
 canvas = Canvas(tk, width=600, height=600, highlightthickness=0, border=0) # create canvas
-canvas.pack() # pack
+canvas.pack() # pack canvas onto Tk screen
 def callback():
     print("""
 This is a warning message from the Egg Game.
@@ -56,42 +61,17 @@ def endegggame():
             filew.close()
             messagebox.showinfo("YAY!", f"You beat the high score of {oldscore}. Your score was {hscore}.")
         messagebox.showwarning('Game Ending', 'The game is ending.')
-        quit()
         del hscore, score, oldscore, DUMP_OBJECT, FILENAME, filew
         del egg1, egg2, egg3, egg4
         print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
-        print('Game Over - Game Over - Game Over - Game Over - Game Over - ')
         pygame.mixer.music.pause()
         tk.destroy()
+        quit("hi")
     else:
         messagebox.showinfo('Game Continuing', 'The game is continuing. Click the game window to keep playing.')
 endgame = Button(tk, text="Stop Game", command=endegggame)
 endgame.pack()
-tk.protocol("WM_DELETE_WINDOW", endegggame)
+tk.protocol("WM_DELETE_WINDOW", callback)
 bgid = canvas.create_image(0, 0, anchor=NW, image=bgfile) # create background
 score = 0 # set score to 0
 scoreid = canvas.create_text(500, 15, text=f"Egg Points: {score}", font=('Avenir', 30),
@@ -118,7 +98,7 @@ class Catcher: # Catcher class
         canvas.move(self.id, 17, 0) # move on-screen
         self.x += 7 # update y
         
-def newegg(eggnum, class0='Egg'): # create function to replace existing eggs with new ones at the top of screen
+def new_egg(eggnum, class0='Egg'): # create function to replace existing eggs with new ones at the top of screen
     global egg1, egg2, egg3, egg4, eggid1, eggid2, eggid3, eggid4, catch, canvas # global variables
     try: 
         randomint = random.randint(99, 500) # create random number
@@ -145,62 +125,90 @@ def newegg(eggnum, class0='Egg'): # create function to replace existing eggs wit
         return 1 # if function worked
     except:
         return 0 # if error occured
-eggid1, eggid2, eggid3, eggid4 = 0, 0, 0, 0 # set variables to blank integers (0)
-egg1, egg2, egg3, egg4 = 1, 1, 1, 1 # set eggs to blank integers (1)
-catcherid = canvas.create_image(0, 470, anchor=NW, image=catchfile) # create catcher id
-catch = Catcher([0, 470], catcherid) # create Catcher object
-tk.bind("<Left>", catch.left) # set the left arrow key to left catcher
-tk.bind("<Right>", catch.right) # set the right arrow key to right catcher
-gameon = True
-def multicheckeggs():
+eggid1, eggid2, eggid3, eggid4 = 0, 0, 0, 0
+egg1, egg2, egg3, egg4 = 1, 1, 1, 1
+catcherid = canvas.create_image(0, 470, anchor=NW, image=catchfile)
+catch = Catcher([0, 470], catcherid)
+tk.bind("<Left>", catch.left)
+tk.bind("<Right>", catch.right)
+def checkalleggs():
     global score, scorecounts, canvas, score
     global score
     t1, t2, t3, t4 = False, False, False, False
-    if egg1.y > 350 and egg1.x > catch.x+110 and egg1.x < catch.x+315: # check if touching
+    print("X, Y  of egg1:", egg1.x, egg1.y, "egg2:", egg2.x, egg2.y)
+    print("X, Y  of egg3:", egg3.x, egg3.y, "egg4:", egg4.x, egg4.y)
+    print("Catcher x:", catch.x)
+    print("SCORE:", score)
+    print("\n\n\n")
+    if egg1.x > 350 and egg1.x > catch.x+110 and egg1.x < catch.x+315: # check if touching
         score += 1 # update score
         canvas.itemconfigure(scoreid, text=f"Egg Points: {score}") # change text
         t1 = True # needs replacing
-    if egg2.y > 350 and egg2.x > catch.x+110 and egg2.x < catch.x+315: # check if touching
+        new_egg(1)
+        return t1, t2, t3, t4  # return replace values
+
+    elif egg2.y > 350 and egg2.x > catch.x+110 and egg2.x < catch.x+315: # check if touching
         score += 1 # update score
         canvas.itemconfigure(scoreid, text=f"Egg Points: {score}") # change text
         t2 = True # needs replacing
-    if egg3.y > 350 and egg3.x > catch.x+110 and egg3.x < catch.x+315: # check if touching
+        new_egg(2)
+        return t1, t2, t3, t4  # return replace values
+
+    elif egg3.y > 350 and egg3.x > catch.x+110 and egg3.x < catch.x+315: # check if touching
         score += 1 # update score
         canvas.itemconfigure(scoreid, text=f"Egg Points: {score}") # change text
         t3 = True # needs replacing
-    if egg4.y > 350 and egg4.x > catch.x+110 and egg4.x < catch.x+315: # check if touching
+        new_egg(3)
+        return t1, t2, t3, t4  # return replace values
+
+    elif egg4.y > 350 and egg4.x > catch.x+110 and egg4.x < catch.x+315: # check if touching
         score += 1 # update score
         canvas.itemconfigure(scoreid, text=f"Egg Points: {score}") # change text
         t4 = True # needs replacing
-        
+        new_egg(4)
+        return t1, t2, t3, t4  # return replace values
+
     if egg1.y > 550: # if below screen
         t1 = True # replace
         score -= 1 # update score
         canvas.itemconfigure(scoreid, text=f"Egg Points: {score}")
+        new_egg(1)
+        return t1, t2, t3, t4  # return replace values
+
     if egg2.y > 550: # if below screen
         score -= 1 # update score
         canvas.itemconfigure(scoreid, text=f"Egg Points: {score}")
         t2 = True # replace
+        new_egg(2)
+        return t1, t2, t3, t4  # return replace values
+
     if egg3.y > 550: # if below screen
         score -= 1 # update score
         canvas.itemconfigure(scoreid, text=f"Egg Points: {score}")
         t3 = True # replace
+        new_egg(3)
+        return t1, t2, t3, t4  # return replace values
+
     if egg4.y > 550: # if below screen
         score -= 1 # update score
         canvas.itemconfigure(scoreid, text=f"Egg Points: {score}")
         t4 = True # replace
-    
-    return t1, t2, t3, t4 # return replace values
-def simplecheck(num): # define simple function to get value of one egg
-    return list(multicheckeggs())[num-1] # return list of multi check function with indice of egg num
+        new_egg(4)
+        return t1, t2, t3, t4  # return replace values
+
+    return t1, t2, t3, t4
+
+def checkoneegg(num): # define simple function to get value of one egg
+    return checkalleggs()[num-1] # return list of multi check function with indice of egg num
 def update_game(): # like a main loop
-    simplereplace() # replaces eggs that need replacing
+    replace_eggs() # replaces eggs that need replacing
+    checkalleggs()
     egg1.update() # move egg down
     egg2.update() # move egg down
     egg3.update() # move egg down
     egg4.update() # move egg down
     tk.after(600, update_game) # do function again after 600 milliseconds
-def simplereplace(start=False): # function to replace eggs if they need replacing
+def replace_eggs(start=False): # function to replace eggs if they need replacing
     global eggid1, eggid2, eggid3, eggid4, egg1, egg2, egg3, egg4 # global variables
     if start: # if game just started and eggs need creating
         eggid1 = canvas.create_image(300, 100, anchor=NW, image=eggfile) # create id
@@ -212,14 +220,15 @@ def simplereplace(start=False): # function to replace eggs if they need replacin
         eggid4 = canvas.create_image(300, 300, anchor=NW, image=eggfile) # create id
         egg4 = Egg([300, 300], eggid4) # create Egg
     else: # if eggs need replacing
-        if simplecheck(1): # check eggs
-            newegg(1) # new egg
-        if simplecheck(2): # check eggs
-            newegg(2) # new egg
-        if simplecheck(3): # check eggs
-            newegg(3) # new egg
-        if simplecheck(4): # check eggs
-            newegg(4) # new egg
-simplereplace(True) # create new eggs
+        # if checkoneegg(1): # check eggs
+        #     new_egg(1) # new egg
+        # if checkoneegg(2): # check eggs
+        #     new_egg(2) # new egg
+        # if checkoneegg(3): # check eggs
+        #     new_egg(3) # new egg
+        # if checkoneegg(4): # check eggs
+        #     new_egg(4) # new egg
+        pass
+replace_eggs(True) # create new eggs
 update_game() # loop
 tk.mainloop() # Tk mainloop to update images and classes

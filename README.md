@@ -1,4 +1,4 @@
-# Eshaan's Egg Game
+# Egg Catcher
 ## Overview
 This is an Egg Game in which you try to catch the eggs with the catcher. It uses Tkinter and a Canvas widget to animate the eggs.
 *You can download `Egg Game.mov` to see a demo video.*
